@@ -1,48 +1,73 @@
 // ignore_for_file: deprecated_member_use
-
+import './conclusao.dart';
+import'./questionario.dart';
 import 'package:flutter/material.dart';
-import './questao.dart';
 main()=> runApp(PerguntaApp());
 class _PerguntaAppState extends State<PerguntaApp>{
 
-var _perguntaSelecionada = 0;
+final _perguntas = const [
+    {'texto' : 'Qual é a sua cor favorita ?',
+    'resposta' : [
+      {'texto' :'Preto',  'nota' : 10},
+      {'texto':'Vermelho','nota': 5},
+      {'texto':'Verde',   'nota' : 3},
+      {'texto':'Branco',  'nota': 1}
+      ] } ,
+    {'texto' : 'Qual é o seu animal favorita?',
+    'resposta' : [
+      {'texto':'Coelho', 'nota' : 10},
+      {'texto':'Cobra','nota' : 5},
+      {'texto':'Elefante', 'nota' : 3},
+      {'texto':'Leão','nota': 1}
+      ]},
+     {'texto' : 'Qual é o seu instrutor Favorito?',
+    'resposta' : [{'texto':'Maria','nota' : 10},
+    {'texto':'João', 'nota' : 5},
+    {'texto':'Leo','nota':3},
+    {'texto':'Pedro','nota': 1} 
+   ]
+   }
+   ];
 
- void _responder(){
+
+
+var _perguntaSelecionada = 0;
+var _pontuacao_Total = 0;
+
+void _reiniciarQuestionario(){
+  setState(() {
+    _perguntaSelecionada = 0;
+    _pontuacao_Total = 0;
+  });
+}
+
+  bool get temPerguntaSelecionada{
+    return _perguntaSelecionada < _perguntas.length;
+  }
+
+ void _responder(int nota){
     print('Pergunta Respondida');
     setState(() {
-    _perguntaSelecionada++;  
+    _perguntaSelecionada++;
+    _pontuacao_Total += nota;  
     });
     print(_perguntaSelecionada);
   }
+
  
   @override
   Widget build(BuildContext context){
-   final List<String> perguntas = [
-     'Qual é a sua cor favorita ?',
-     'Qual é o seu animal favorita?',
-     'Qual é a sua comida favorita?'
-   ];
-   
+    
+ 
     return MaterialApp(
       home: Scaffold(
           appBar: AppBar(
             title: Text('Perguntas'),
           ),
-          body: Column(
-            children:<Widget> [
-              Questao(perguntas[_perguntaSelecionada]),
-              RaisedButton(
-                child: Text('Resposta 1'),
-                onPressed: _responder,
-              ),RaisedButton(
-                child: Text('Resposta 2'),
-                onPressed: _responder,
-              ),RaisedButton(
-                child: Text('Resposta 3'),
-                onPressed: _responder,
-              )
-            ],
-          ),
+          body: temPerguntaSelecionada ? Questionario(perguntaSelecionada: _perguntaSelecionada,
+            perguntas: _perguntas,
+            responder: _responder)
+          :Conclusao(_pontuacao_Total, _reiniciarQuestionario)
       ),
     );
   }
